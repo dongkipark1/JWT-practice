@@ -38,9 +38,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserRequest.LoginDTO reqDTO) {
-        SessionUser sessionUser = userService.로그인(reqDTO);
-        session.setAttribute("sessionUser", sessionUser);
-        return ResponseEntity.ok(new ApiUtil(null));
+        String jwt = userService.로그인(reqDTO);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + jwt).body(null);
     }
 
     @GetMapping("/logout")

@@ -1,11 +1,13 @@
 package shop.mtcoding.blog.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.mtcoding.blog._core.errors.exception.Exception400;
 import shop.mtcoding.blog._core.errors.exception.Exception401;
 import shop.mtcoding.blog._core.errors.exception.Exception404;
+import shop.mtcoding.blog._core.utils.JwtUtil;
 
 import java.util.Optional;
 
@@ -31,13 +33,13 @@ public class UserService {
         return new UserResponse.DTO(user); // 엔티티 생명 종료
     }
     
-    public SessionUser 로그인(UserRequest.LoginDTO reqDTO){
+    public String  로그인(UserRequest.LoginDTO reqDTO){
         User user = userJPARepository.findByUsernameAndPassword(reqDTO.getUsername(), reqDTO.getPassword())
                 .orElseThrow(() -> new Exception401("인증되지 않았습니다"));
 
+        String jwt = JwtUtil.create(user);
 
-
-        return new SessionUser(user);
+        return jwt;
     }
 
     @Transactional
